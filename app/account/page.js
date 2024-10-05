@@ -1,3 +1,11 @@
+export const metadata = {
+  title: "Account",
+};
+
 export default function Account() {
-  return <h1>Account</h1>;
+  return (
+    <div>
+      <h1>Welcome,gautam</h1>
+    </div>
+  );
 }
