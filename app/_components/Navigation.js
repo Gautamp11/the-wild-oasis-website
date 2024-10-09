@@ -4,6 +4,7 @@ import Image from "next/image";
 
 export default async function Navigation() {
   const session = await auth();
+  const sessionUserImage = session?.user?.image;
 
   return (
     <nav className="z-10 text-xl">
@@ -30,7 +31,7 @@ export default async function Navigation() {
               href="/account"
               className="hover:text-accent-400 transition-colors flex items-center gap-2"
             >
-              <img src={session.user.image} className="h-12 rounded-full" />
+              <img src={sessionUserImage} className="h-12 rounded-full" />
               <span>Guest area</span>
             </Link>
           ) : (
