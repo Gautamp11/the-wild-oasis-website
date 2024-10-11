@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
+import { redirect } from "next/navigation";
 
 export async function updateProfile(formData) {
   const session = await auth();
@@ -41,9 +42,68 @@ export async function deleteReservation(bookingId) {
     .delete()
     .eq("id", bookingId);
 
-  if (error) throw new Error("Booking could not be deleted");
+  if (error) {
+    console.log(error);
+    throw new Error("Booking could not be deleted");
+  }
 
   revalidatePath("/account/reservations");
+}
+
+export async function updateReservation(formData) {
+  const numGuests = formData.get("numGuests");
+  const observations = formData.get("observations");
+  const id = formData.get("bookingId");
+
+  const updatedFields = {
+    numGuests: numGuests,
+    observations: observations,
+  };
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(updatedFields)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.log(error);
+    throw new Error("Booking could not be updated");
+  }
+  revalidatePath(`/account/reservations/edit/${id}`);
+  revalidatePath(`/account/reservations`);
+  redirect("/account/reservations");
+}
+
+export async function createBooking(bookingData, formData) {
+  const session = await auth();
+
+  console.log(bookingData, formData);
+  const newBooking = {
+    ...bookingData,
+    guestId: session.user.guestId,
+    numGuests: formData.get("numGuests"),
+    observations: formData.get("observations"),
+    extrasPrice: 0,
+    totalPrice: bookingData.cabinPrice,
+    isPaid: false,
+    hasBreakfast: false,
+    status: "unconfirmed",
+  };
+
+  console.log(newBooking);
+
+  const { data, error } = await supabase.from("bookings").insert([newBooking]);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be created");
+  }
+
+  revalidatePath(`/cabins/${bookingData.cabinId}`);
+
+  redirect("/thankyou");
 }
 
 // using server action so, that we can submit form on server side only

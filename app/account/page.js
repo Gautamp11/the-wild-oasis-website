@@ -9,7 +9,9 @@ export default async function Account() {
 
   return (
     <div>
-      <h1>Welcome, {session.user.name}</h1>
+      <h1 className="font-semibold text-2xl mb-6">
+        Welcome, {session.user.name}
+      </h1>
     </div>
   );
 }
