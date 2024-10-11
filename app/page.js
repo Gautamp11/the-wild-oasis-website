@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import bg from "@/public/bg.png";
 
-export default function Home() {
+export default function Page() {
   return (
-    <main className="mt-24">
+    <div className="mt-24">
       <Image
         src={bg}
         fill
@@ -25,6 +25,6 @@ export default function Home() {
           Explore luxury cabins
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

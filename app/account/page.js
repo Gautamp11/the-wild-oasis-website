@@ -6,7 +6,6 @@ export const metadata = {
 
 export default async function Account() {
   const session = await auth();
-  console.log(session);
 
   return (
     <div>
